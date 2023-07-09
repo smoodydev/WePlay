@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Grid Page</title>
+    <style>
+        #container {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        
+        #rightGrid {
+            border: 1px solid black;
+            margin: 10px;
+            padding: 5px;
+        }
+        #leftCells{
+
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            grid-template-rows: repeat(20, 1fr);
+            gap: 0;
+        }
+        .cell {
+            width: 30px;
+            height: 30px;
+            border: 1px solid gray;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="leftGrid">
+            <h3>Left Grid</h3>
+            <div id="leftCells">
+                <!-- Left grid cells will be dynamically generated -->
+            </div>
+        </div>
+        <div id="rightGrid">
+            <h3>Right Grid</h3>
+            <div id="rightCells">
+                <!-- Right grid cells will be dynamically generated -->
+            </div>
+        </div>
+    </div>
+
+    <button id="generateLayoutButton">Generate Layout</button>
+
+    <script>
+        const leftGridSize = 20;
+
+        const leftGridContainer = document.getElementById('leftCells');
+        const rightGridContainer = document.getElementById('rightCells');
+
+        let selectedNumber = null;
+
+        const colorOptions = {
+            1: 'green',
+            2: 'yellow',
+            50: 'blue'
+        };
+
+        // Generate the left grid cells
+        for (let i = 0; i < leftGridSize; i++) {
+            for (let j = 0; j < leftGridSize; j++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell', 'leftCell');
+                cell.addEventListener('click', () => {
+                    if (0 <= selectedNumber) {
+                        cell.setAttribute('data-number', selectedNumber);
+                        console.log(getColor(selectedNumber))
+                        cell.style.backgroundColor = getColor(selectedNumber);
+                    }
+                    else{
+                        console.log("no NBumb")
+                    }
+                });
+                cell.setAttribute('data-number', 1);
+                cell.style.backgroundColor = getColor(1);
+                leftGridContainer.appendChild(cell);
+            }
+        }
+
+        // Generate the right grid cells
+        for (const number in colorOptions) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell', 'rightCell');
+            cell.addEventListener('click', () => {
+                selectedNumber = parseInt(number);
+                console.log(selectedNumber)
+            });
+            cell.style.backgroundColor = colorOptions[number];
+            rightGridContainer.appendChild(cell);
+        }
+
+        function getColor(number) {
+            console.log(colorOptions[number])
+            return colorOptions[number] || 'white';
+        }
+
+        const generateLayoutButton = document.getElementById('generateLayoutButton');
+        generateLayoutButton.addEventListener('click', generateLayout);
+
+        function generateLayout() {
+            const layout = [];
+            let inner = [];
+            const cells = leftGridContainer.getElementsByClassName('leftCell');
+            let count = 0;
+
+            for (let i = 0; i < cells.length; i++) {
+                if (i % 20 == 0 && i !=0 ) {
+                    console.log("poop")
+                    layout.push(inner);
+                    inner = [];
+                }
+                const cell = cells[i];
+                const number = cell.getAttribute('data-number');
+                inner.push(number ? parseInt(number) : 'empty');
+            }
+            layout.push(inner);
+            console.log(layout);
+        }
+    </script>
+</body>
+
+</html>
